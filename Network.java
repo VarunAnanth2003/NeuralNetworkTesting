@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -86,7 +85,6 @@ public class Network {
         for(Layer l : layerQueue) {
             stackLayers.push(l);
         }
-        
         Layer curLayer = stackLayers.pop();
         double[] dCdO = Util.calculateCostDerivativeVector(curLayer.getValuesAsVector(), expected);
         do {
@@ -94,7 +92,7 @@ public class Network {
             double[][] dCdW = Util.outerProduct(dCdi, stackLayers.peek().getValuesAsVector());
             curLayer.addBiasDeltas(dCdi);
             stackLayers.peek().addWeightDeltas(dCdW);
-            dCdO = Util.multiply(curLayer.getWeightsAsMatrix(), dCdi);
+            dCdO = Util.multiply(stackLayers.peek().getWeightsAsMatrix(), dCdi);
             curLayer = stackLayers.pop();
         } while (!stackLayers.empty());
         

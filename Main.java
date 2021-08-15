@@ -1,46 +1,67 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import Exceptions.TooFewLayersException;
+
 
 public class Main {
     public static final int generationSize = 100;
     public static ArrayList<Network> generation = new ArrayList<>();
     public static double[][] leftWhiteA = { { 1, 0, 0 }, { 1, 0, 0 }, { 1, 0, 0 } };
     public static double[][] rightWhiteA = { { 0, 0, 1 }, { 0, 0, 1 }, { 0, 0, 1 } };
-    public static double[][] leftWhiteB = { { 0.75, 0, 0 }, { 0.9, 0, 0 }, { 0.8, 0, 0 } };
-    public static double[][] rightWhiteB = { { 0, 0, 0.9 }, { 0, 0, 0.8 }, { 0, 0, 0.85 } };
-    public static double[][] leftWhiteC = { { 0.66, 0, 0 }, { 0.95, 0, 0 }, { 1, 0, 0 } };
-    public static double[][] rightWhiteC = { { 0, 0, 0.8 }, { 0, 0, 0.8 }, { 0, 0, 0.7 } };
+    public static double[][] leftWhiteB = { { 0.79, 0, 0 }, { 0.84, 0, 0 }, { 0.9, 0, 0 } };
+    public static double[][] rightWhiteB = { { 0, 0, 0.93 }, { 0, 0, 0.89 }, { 0, 0, 0.95 } };
+    public static double[][] leftWhiteC = { { 0.92, 0, 0 }, { 0.75, 0, 0 }, { 0.87, 0, 0 } };
+    public static double[][] rightWhiteC = { { 0, 0, 0.97 }, { 0, 0, 1 }, { 0, 0, 0.79 } };
 
-    public static double[][] leftWhiteTester = { { 0.7, 0, 0 }, { 0.69, 0, 0 }, { 0.91, 0, 0 } };
+    public static double[][] leftWhiteTester = { { 0.9, 0, 0 }, { 0.69, 0, 0 }, { 0.91, 0, 0 } };
     public static double[][] junkTester = { { 0, 0.8, 0.66 }, { 0, 0.1, 0 }, { 0, 0, 0.43 } };
-    public static double[][] rightWhiteTester = { { 0, 0, 0.9 }, { 0, 0, 0.69 }, { 0, 0, 0.97 } };
+    public static double[][] rightWhiteTester = { { 0, 0, 0.9 }, { 0, 0, 0.9 }, { 0, 0, 0.97 } };
     public static HashMap<OutputProfiles, double[][][]> trainingData = new HashMap<>();
-
+    //TODO: Implement batch gradient descent
+    //TODO: Prevent bias training with variance of occurence between profiles
     public static void main(String[] args) throws TooFewLayersException {
         insertData();
         Network n = new Network(9, 2);
-        double totalCost = 0;
-        int dataCounter = 0;
+        testNN(n);
         for (OutputProfiles op : trainingData.keySet()) {
             double[] desiredValues = op.getProfile();
+            System.out.println(op);
             for (int j = 0; j < trainingData.get(op).length; j++) {
                 n.initializeNetwork(Util.flattenArr(trainingData.get(op)[j]));
                 double[] result = n.pulse();
                 double cost = Util.calculateCost(result, desiredValues);
                 System.out.println("Cost: " + cost);
-                totalCost += cost;
-                dataCounter++;
                 n.learnFrom(op.profile);
             }
         }
-        double finalCost = totalCost/dataCounter;
-        //System.out.println(finalCost);
+        testNN(n);
+    }
+
+    public static void testNN(Network n) {
+        System.out.println("\nTest begun");
+        n.initializeNetwork(Util.flattenArr(leftWhiteTester));
+        final DecimalFormat df = new DecimalFormat("0.00");
+        double[] result = n.pulse();
+        Arrays.stream(result).forEach(e -> System.out.print(df.format(e) + " " ));
+        System.out.println();
+        System.out.println(Arrays.toString(OutputProfiles.LEFT_PROFILE.getProfile()));
+        System.out.println(Util.calculateCost(result, OutputProfiles.LEFT_PROFILE.getProfile()));
+
+        n.initializeNetwork(Util.flattenArr(rightWhiteTester));
+        result = n.pulse();
+        Arrays.stream(result).forEach(e -> System.out.print(df.format(e) + " " ));
+        System.out.println();
+        System.out.println(Arrays.toString(OutputProfiles.RIGHT_PROFILE.getProfile()));
+        System.out.println(Util.calculateCost(result, OutputProfiles.RIGHT_PROFILE.getProfile()));
+
+        System.out.println("Test ended\n");
     }
 
     public static void insertData() {
-        trainingData.put(OutputProfiles.LEFT_PROFILE, new double[][][] { leftWhiteA, leftWhiteB, leftWhiteC });
-        trainingData.put(OutputProfiles.RIGHT_PROFILE, new double[][][] { rightWhiteA, rightWhiteB, rightWhiteC });
+        trainingData.put(OutputProfiles.LEFT_PROFILE, new double[][][] { leftWhiteA, leftWhiteB, leftWhiteC});
+        trainingData.put(OutputProfiles.RIGHT_PROFILE, new double[][][] { rightWhiteA, rightWhiteC, rightWhiteC}); 
     }
 
     public static Network[] getBreeders(double[] costArr) {
@@ -81,10 +102,6 @@ public class Main {
     }
 }
 // TODO: Get pixel data from 100px by 100px images
-// TODO: Find a way to average cost over multiple training data images
-// TODO: Use average cost to select best NNs
-// TODO: Breed NN for performance with variable noise and see results
-// TODO: Comment code
 /*abstract       /*insertData();
         // train!
         for (int i = 0; i < generationSize; i++) {

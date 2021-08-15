@@ -1,8 +1,7 @@
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class Layer {
-    private double learningRate = 0.1;
+    private double learningRate = 0.9;
     private HashSet<Neuron> neuronSet = new HashSet<>();
     public Layer(int nodesNum, int nextNodesNum) {
         for (int i = 0; i < nodesNum; i++) {
