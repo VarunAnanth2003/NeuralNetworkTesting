@@ -1,6 +1,8 @@
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Stack;
 
 import Exceptions.TooFewLayersException;
 
@@ -20,8 +22,23 @@ public class Network {
             throw new TooFewLayersException();
         }
         for (int i = 0; i < layerNodes.length; i++) {
-            layerQueue.add(new Layer(layerNodes[i]));
+            try {
+                int currentNodeAmount = layerNodes[i];
+                int nextNodeAmount = layerNodes[i+1];
+                layerQueue.add(new Layer(currentNodeAmount, nextNodeAmount));
+            } catch (IndexOutOfBoundsException e) {
+                //e.printStackTrace();
+                layerQueue.add(new Layer(layerNodes[i]));
+            }
         }
+        inputLayer = layerQueue.peek();
+    }
+    public Network(Queue<Layer> layerQueue) throws TooFewLayersException {
+        if(layerQueue.size() < 2) {
+            throw new TooFewLayersException();
+        }
+        numLayers = layerQueue.size();
+        this.layerQueue = layerQueue;
         inputLayer = layerQueue.peek();
     }
     public void initializeNetwork(double[] initialValues) {
@@ -55,6 +72,7 @@ public class Network {
             currentLayer.activateLayer(nextLayer);
             layerQueue.add(currentLayer);
         }
+        layerQueue.add(layerQueue.poll());
         double[] ret_val = new double[nextLayer.getNeurons().size()];
         int counter = 0;
         for(Neuron n : nextLayer.getNeurons()) {
@@ -63,11 +81,32 @@ public class Network {
         }
         return ret_val;
     }
+    public void learnFrom(double[] expected) {
+        Stack<Layer> stackLayers = new Stack<>();
+        for(Layer l : layerQueue) {
+            stackLayers.push(l);
+        }
+        
+        Layer curLayer = stackLayers.pop();
+        double[] dCdO = Util.calculateCostDerivativeVector(curLayer.getValuesAsVector(), expected);
+        do {
+            double[] dCdi = Util.hadamardProduct(curLayer.getValuesAsVector(), dCdO);
+            double[][] dCdW = Util.outerProduct(dCdi, stackLayers.peek().getValuesAsVector());
+            curLayer.addBiasDeltas(dCdi);
+            stackLayers.peek().addWeightDeltas(dCdW);
+            dCdO = Util.multiply(curLayer.getWeightsAsMatrix(), dCdi);
+            curLayer = stackLayers.pop();
+        } while (!stackLayers.empty());
+        
+    }
     public double getCost() {
         return this.cost;
     }
     public void setCost(double cost) {
         this.cost = cost;
+    }
+    public Queue<Layer> getLayers() {
+        return layerQueue;
     }
     @Override
     public String toString() {
