@@ -20,9 +20,9 @@ public class Main {
     public static void main(String[] args) throws TooFewLayersException {
         prepareData();
         Network n = new Network(new int[] { 81, 4 },
-                new FunctionOptions[] { FunctionOptions.SIGMOID, FunctionOptions.SIGMOID });
+                new FunctionOptions[] { FunctionOptions.SIGMOID, FunctionOptions.SIGMOID, FunctionOptions.SIGMOID });
         testNN(n);
-        for (int i = 0; i < Constants.batchSize * 100; i++) {
+        for (int i = 0; i < Constants.batchSize * 1000; i++) {
             OutputProfiles op = OutputProfiles.getRandomProfile();
             n.pulseWithInput(Util.flattenArr(trainingData.get(op)[new Random().nextInt(100000)]));
             n.learnFrom(op.getProfile());
@@ -63,6 +63,25 @@ public class Main {
         System.out.println(Arrays.toString(OutputProfiles.D.getProfile()));
         System.out.println(Util.calculateCost(result, OutputProfiles.D.getProfile()));
 
+        double a = (new Random().nextDouble() * (0.25)) + (0.75);
+        double b = (new Random().nextDouble() * (0.25));
+        double[][] unseenData = {
+            {a, a, b, a, a, a, a, a, a},
+            {a, 0, 0, 0, 0, 0, 0, b, a},
+            {a, 0, b, 0, 0, 0, b, 0, a},
+            {a, 0, 0, 0, 0, 0, 0, 0, a},
+            {a, 0, 0, b, b, 0, b, 0, a},
+            {a, 0, 0, 0, 0, 0, 0, 0, b},
+            {a, 0, b, 0, 0, 0, 0, 0, a},
+            {a, 0, 0, b, 0, b, 0, 0, a},
+            {a, b, a, a, a, a, a, a, a}
+        };
+        n.initializeNetwork(Util.flattenArr(unseenData));
+        result = n.pulseWithCost();
+        Arrays.stream(result).forEach(e -> System.out.print(df.format(e) + " "));
+        System.out.println();
+        System.out.println(Arrays.toString(OutputProfiles.A.getProfile()));
+        System.out.println(Util.calculateCost(result, OutputProfiles.A.getProfile()));
         System.out.println("Test ended\n");
     }
 
