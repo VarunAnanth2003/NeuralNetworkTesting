@@ -11,9 +11,10 @@ public class Neuron {
         w = new double[nextLayerNeuronCount];
         if (randomize) {
             for (int i = 0; i < nextLayerNeuronCount; i++) {
-                w[i] = Util.minNeuronRange + (Util.maxNeuronRange - Util.minNeuronRange) * (new Random().nextDouble());
+                w[i] = Constants.minNeuronRange
+                        + ((Constants.maxNeuronRange - Constants.minNeuronRange) * (new Random().nextDouble()));
             }
-            b = Util.minNeuronRange + (Util.maxNeuronRange - Util.minNeuronRange) * (new Random().nextDouble());
+            b = Constants.minNeuronRange + ((Constants.maxNeuronRange - Constants.minNeuronRange) * (new Random().nextDouble()));
         } else {
             for (int i = 0; i < nextLayerNeuronCount; i++) {
                 w[i] = 0;
@@ -21,10 +22,11 @@ public class Neuron {
             b = 0;
         }
     }
+
     public Neuron(boolean randomize) {
         if (randomize) {
             w = new double[0];
-            b = Util.minNeuronRange + (Util.maxNeuronRange - Util.minNeuronRange) * (new Random().nextDouble());
+            b = Constants.minNeuronRange + (Constants.maxNeuronRange - Constants.minNeuronRange) * (new Random().nextDouble());
         } else {
             w = new double[0];
             b = 0;

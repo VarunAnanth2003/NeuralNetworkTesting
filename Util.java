@@ -1,19 +1,7 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
 import java.util.stream.Stream;
 
-import Exceptions.TooFewLayersException;
-
 public class Util {
-    public static double minNeuronRange = -0.5;
-    public static double maxNeuronRange = 0.5;
-    public static double learningRate = 0.1;
-    public static double l2 = 0.02;
 
     public static String stringify2DArr(double[][] arr) {
         String ret_val = "";
@@ -39,18 +27,6 @@ public class Util {
         return (sum / error.length);
     }
 
-    public static void printBestChild(int[][] population, int[] error) {
-        int minError = Integer.MAX_VALUE;
-        int minErrorIndex = -1;
-        for (int i = 0; i < error.length; i++) {
-            if (error[i] < minError) {
-                minError = error[i];
-                minErrorIndex = i;
-            }
-        }
-        System.out.println("Best Child: " + Arrays.toString(population[minErrorIndex]) + "\nError: " + minError);
-    }
-
     public static double sigmafy(double input) {
         return 1 / (1 + Math.exp(-input));
     }
@@ -72,7 +48,7 @@ public class Util {
         return ret_val;
     }
 
-    public static double[] calculateCostDerivativeVector(double[] result, double[] desiredValues) {
+    public static double[] calculateCostDerivative(double[] result, double[] desiredValues) {
         double[] ret_val = new double[result.length];
         for (int i = 0; i < result.length; i++) {
             try {
@@ -85,11 +61,10 @@ public class Util {
         return ret_val;
     }
 
-    // values, dcdo
-    public static double[] dCdI(double[] a, double[] b) {
+    public static double[] calculatedCdI(double[] a, double[] b, ActivationFunction af) {
         double[] ret_val = new double[a.length];
         for (int i = 0; i < a.length; i++) {
-            ret_val[i] = sigmafyDerivative(a[i]) * b[i];
+            ret_val[i] = af.getFunction().calculateDerivative(a[i]) * b[i];    
         }
         return ret_val;
     }
