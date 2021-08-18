@@ -14,9 +14,13 @@ import Other.ActivationClasses.FunctionOptions;
 public class Main {
     public static HashMap<OutputProfiles, double[][][]> trainingData = new HashMap<>();
 
+    //TODO: implement momentum cleanly
+    //TODO: Use MNIST handwriting to test NN
+    //TODO: Comment code and make useable
     public static void main(String[] args) throws TooFewLayersException {
         prepareData();
-        Network n = new Network(new int[] {81, 4}, new FunctionOptions[] {FunctionOptions.SIGMOID, FunctionOptions.SIGMOID});
+        Network n = new Network(new int[] { 81, 4 },
+                new FunctionOptions[] { FunctionOptions.SIGMOID, FunctionOptions.SIGMOID });
         testNN(n);
         for (int i = 0; i < Constants.batchSize * 100; i++) {
             OutputProfiles op = OutputProfiles.getRandomProfile();
@@ -91,7 +95,8 @@ public class Main {
     }
 
     enum OutputProfiles {
-        A(new double[] { 1, 0, 0, 0 }), B(new double[] { 0, 1, 0, 0 }), C(new double[] { 0, 0, 1, 0 }), D(new double[] {0, 0, 0, 1});
+        A(new double[] { 1, 0, 0, 0 }), B(new double[] { 0, 1, 0, 0 }), C(new double[] { 0, 0, 1, 0 }),
+        D(new double[] { 0, 0, 0, 1 });
 
         private double[] profile;
 

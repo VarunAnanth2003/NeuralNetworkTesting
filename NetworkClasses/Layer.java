@@ -24,7 +24,7 @@ public class Layer {
         this.af = af;
     }
 
-    public Layer(int nodesNum,  ActivationFunction af) {
+    public Layer(int nodesNum, ActivationFunction af) {
         for (int i = 0; i < nodesNum; i++) {
             neuronQueue.add(new Neuron(true));
         }

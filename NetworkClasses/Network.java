@@ -22,12 +22,13 @@ public class Network {
         if (numLayers < 2) {
             throw new TooFewLayersException();
         }
-        for (int i = 0; i < layerNodeCounts.length-1; i++) {
+        for (int i = 0; i < layerNodeCounts.length - 1; i++) {
             int currentNodeAmount = layerNodeCounts[i];
             int nextNodeAmount = layerNodeCounts[i + 1];
             layerQueue.add(new Layer(currentNodeAmount, nextNodeAmount, new ActivationFunction(afArr[i])));
         }
-        layerQueue.add(new Layer(layerNodeCounts[layerNodeCounts.length-1], new ActivationFunction(afArr[layerNodeCounts.length-1])));
+        layerQueue.add(new Layer(layerNodeCounts[layerNodeCounts.length - 1],
+                new ActivationFunction(afArr[layerNodeCounts.length - 1])));
         inputLayer = layerQueue.peek();
     }
 

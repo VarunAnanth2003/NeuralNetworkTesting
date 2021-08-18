@@ -1,6 +1,5 @@
 package NetworkClasses;
 
-
 import java.util.Arrays;
 import java.util.Random;
 
@@ -18,7 +17,8 @@ public class Neuron {
                 w[i] = Constants.minNeuronRange
                         + ((Constants.maxNeuronRange - Constants.minNeuronRange) * (new Random().nextDouble()));
             }
-            b = Constants.minNeuronRange + ((Constants.maxNeuronRange - Constants.minNeuronRange) * (new Random().nextDouble()));
+            b = Constants.minNeuronRange
+                    + ((Constants.maxNeuronRange - Constants.minNeuronRange) * (new Random().nextDouble()));
         } else {
             for (int i = 0; i < nextLayerNeuronCount; i++) {
                 w[i] = 0;
@@ -30,7 +30,8 @@ public class Neuron {
     public Neuron(boolean randomize) {
         if (randomize) {
             w = new double[0];
-            b = Constants.minNeuronRange + (Constants.maxNeuronRange - Constants.minNeuronRange) * (new Random().nextDouble());
+            b = Constants.minNeuronRange
+                    + (Constants.maxNeuronRange - Constants.minNeuronRange) * (new Random().nextDouble());
         } else {
             w = new double[0];
             b = 0;

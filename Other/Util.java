@@ -1,4 +1,5 @@
 package Other;
+
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -67,7 +68,7 @@ public class Util {
     public static double[] calculatedCdI(double[] a, double[] b, ActivationFunction af) {
         double[] ret_val = new double[a.length];
         for (int i = 0; i < a.length; i++) {
-            ret_val[i] = af.getFunction().calculateDerivative(a[i]) * b[i];    
+            ret_val[i] = af.getFunction().calculateDerivative(a[i]) * b[i];
         }
         return ret_val;
     }
