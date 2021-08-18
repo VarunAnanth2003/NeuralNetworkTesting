@@ -1,3 +1,5 @@
+package Other;
+
 import java.util.Random;
 
 public class DataGenerator {

@@ -1,3 +1,4 @@
+package Other;
 public final class Constants {
     public static final double minNeuronRange = -0.5;
     public static final double maxNeuronRange = 0.5;

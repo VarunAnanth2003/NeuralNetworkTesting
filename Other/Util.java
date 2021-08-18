@@ -1,5 +1,8 @@
+package Other;
 import java.util.Arrays;
 import java.util.stream.Stream;
+
+import Other.ActivationClasses.ActivationFunction;
 
 public class Util {
 

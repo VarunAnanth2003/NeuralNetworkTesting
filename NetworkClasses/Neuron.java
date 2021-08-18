@@ -1,6 +1,10 @@
+package NetworkClasses;
+
 
 import java.util.Arrays;
 import java.util.Random;
+
+import Other.Constants;
 
 public class Neuron {
     private double[] w;

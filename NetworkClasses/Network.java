@@ -1,9 +1,14 @@
+package NetworkClasses;
+
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
 
 import Exceptions.TooFewLayersException;
+import Other.Util;
+import Other.ActivationClasses.ActivationFunction;
+import Other.ActivationClasses.FunctionOptions;
 
 public class Network {
 

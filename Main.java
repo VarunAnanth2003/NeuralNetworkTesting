@@ -1,9 +1,15 @@
+
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
 import Exceptions.TooFewLayersException;
+import NetworkClasses.Network;
+import Other.Constants;
+import Other.DataGenerator;
+import Other.Util;
+import Other.ActivationClasses.FunctionOptions;
 
 public class Main {
     public static HashMap<OutputProfiles, double[][][]> trainingData = new HashMap<>();

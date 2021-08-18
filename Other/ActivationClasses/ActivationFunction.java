@@ -1,3 +1,4 @@
+package Other.ActivationClasses;
 public class ActivationFunction {
     private Function selectedFunction;
     public ActivationFunction(FunctionOptions f) {

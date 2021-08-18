@@ -1,6 +1,12 @@
+package NetworkClasses;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import Other.Constants;
+import Other.Util;
+import Other.ActivationClasses.ActivationFunction;
 
 public class Layer {
     private Queue<Neuron> neuronQueue = new LinkedList<>();
