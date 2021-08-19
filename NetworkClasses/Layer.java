@@ -6,7 +6,7 @@ import java.util.Queue;
 
 import Other.Constants;
 import Other.Util;
-import Other.ActivationClasses.ActivationFunction;
+import Other.FunctionClasses.Activation.ActivationFunction;
 
 public class Layer {
     private Queue<Neuron> neuronQueue = new LinkedList<>();
@@ -72,7 +72,7 @@ public class Layer {
                 sum += (a.getVal() * (a.getWeights()[counter]));
             }
             counter++;
-            sum = Util.sigmafy(sum - b.getBias());
+            sum = af.getFunction().calculateOriginal(sum - b.getBias());
             b.setVal(sum);
         }
     }

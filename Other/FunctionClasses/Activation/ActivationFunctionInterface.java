@@ -1,6 +1,6 @@
-package Other.ActivationClasses;
+package Other.FunctionClasses.Activation;
 
-public interface Function {
+public interface ActivationFunctionInterface {
     public double calculateOriginal(double input);
 
     public double calculateDerivative(double input);

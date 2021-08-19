@@ -3,7 +3,7 @@ package Other;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import Other.ActivationClasses.ActivationFunction;
+import Other.FunctionClasses.Activation.ActivationFunction;
 
 public class Util {
 
@@ -15,28 +15,12 @@ public class Util {
         return ret_val;
     }
 
-    public static String stringify2DArr(int[][] arr, int[] error) {
-        String ret_val = "";
-        for (int i = 0; i < arr.length; i++) {
-            ret_val += i + ": " + Arrays.toString(arr[i]) + "; " + error[i] + "\n";
-        }
-        return ret_val;
-    }
-
     public static double getAvgError(double[] error) {
         double sum = 0;
         for (int i = 0; i < error.length; i++) {
             sum += error[i];
         }
         return (sum / error.length);
-    }
-
-    public static double sigmafy(double input) {
-        return 1 / (1 + Math.exp(-input));
-    }
-
-    public static double sigmafyDerivative(double input) {
-        return (sigmafy(input) * (1 - sigmafy(input)));
     }
 
     public static double calculateCost(double[] result, double[] desiredValues) {
@@ -83,7 +67,7 @@ public class Util {
         return ret_val;
     }
 
-    public static double[] multiply(double[][] a, double[] b) {
+    public static double[] calculatedCdO(double[][] a, double[] b) {
         double[] ret_val = new double[a.length];
         for (int i = 0; i < ret_val.length; i++) {
             ret_val[i] = dotProduct(a[i], b);

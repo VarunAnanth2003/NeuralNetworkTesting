@@ -1,12 +1,12 @@
-package Other.ActivationClasses;
+package Other.FunctionClasses.Activation;
 
 public class ActivationFunction {
-    private Function selectedFunction;
+    private ActivationFunctionInterface selectedFunction;
 
-    public ActivationFunction(FunctionOptions f) {
+    public ActivationFunction(ActivationOptions f) {
         switch (f) {
             case SIGMOID:
-                selectedFunction = new Function() {
+                selectedFunction = new ActivationFunctionInterface() {
 
                     @Override
                     public double calculateOriginal(double input) {
@@ -30,7 +30,7 @@ public class ActivationFunction {
         }
     }
 
-    public Function getFunction() {
+    public ActivationFunctionInterface getFunction() {
         return selectedFunction;
     }
 }
