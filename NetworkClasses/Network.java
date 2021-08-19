@@ -127,7 +127,7 @@ public class Network {
             stackLayers.push(l);
         }
         Layer curLayer = stackLayers.pop();
-        
+
         double[] dCdO = cf.getFunction().calculateDerivative(curLayer.getValuesAsVector(), expected);
         do {
             double[] dCdi = Util.calculatedCdI(curLayer.getValuesAsVector(), dCdO, curLayer.getActivationFunction());

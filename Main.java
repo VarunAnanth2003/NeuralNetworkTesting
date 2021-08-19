@@ -1,6 +1,7 @@
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -14,20 +15,19 @@ import Other.Util;
 import Other.FunctionClasses.Activation.ActivationOptions;
 import Other.FunctionClasses.Cost.CostOptions;
 
+//Less than 1k lines!
 public class Main {
     public static HashMap<OutputProfiles, double[][][]> trainingData = new HashMap<>();
 
-    //TODO: implement momentum cleanly
-    //TODO: Use MNIST handwriting to test NN
-    //TODO: Comment code and make useable
+    // TODO: FULLY understand basic notation, structure, and backpropagation
+    // TODO: implement momentum cleanly
+    // TODO: Use MNIST handwriting to test NN
+    // TODO: Comment code and make useable
     public static void main(String[] args) throws TooFewLayersException {
         prepareData();
-        Network n = new Network(
-            new int[] { 81, 4 },
-            new ActivationOptions[] { ActivationOptions.SIGMOID, ActivationOptions.SIGMOID }, 
-            CostOptions.QUADRATIC
-            );
-        //testNN(n);
+        Network n = new Network(new int[] { 81, 4 },
+                new ActivationOptions[] { ActivationOptions.SIGMOID, ActivationOptions.SIGMOID },
+                CostOptions.QUADRATIC);
         for (int i = 0; i < Constants.batchSize * 1000; i++) {
             OutputProfiles op = OutputProfiles.getRandomProfile();
             n.pulseWithInput(Util.flattenArr(trainingData.get(op)[new Random().nextInt(100000)]));
@@ -40,7 +40,7 @@ public class Main {
 
     public static void testNN(Network n) {
         try {
-            BufferedImage image = ImageIO.read(new File("C.png"));
+            BufferedImage image = ImageIO.read(new File("A.png"));
             double[][] data = new double[image.getHeight()][image.getWidth()];
             for (int i = 0; i < data.length; i++) {
                 for (int j = 0; j < data[i].length; j++) {
@@ -48,12 +48,13 @@ public class Main {
                     int r = (rgb >> 16) & 0xFF;
                     int g = (rgb >> 8) & 0xFF;
                     int b = (rgb & 0xFF);
-                    data[j][i] = Math.abs((((r+g+b)/3)/255)-1);
+                    data[j][i] = Math.abs((((r + g + b) / 3) / 255) - 1);
                 }
             }
             n.initializeNetwork(Util.flattenArr(data));
             double[] result = n.pulseWithResult();
-            System.out.println("This is a " + OutputProfiles.getBestProfile(result));
+            System.out.println("This is a: " + OutputProfiles.getBestProfile(result));
+            System.out.println("NN output: " + Arrays.toString(result));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,6 +114,7 @@ public class Main {
                 return OutputProfiles.CROSS;
             }
         }
+
         public static OutputProfiles getBestProfile(double[] result) {
             OutputProfiles[] desiredValues = OutputProfiles.values();
             double costArr[] = new double[desiredValues.length];
@@ -122,7 +124,7 @@ public class Main {
             double min = Double.POSITIVE_INFINITY;
             int minIndex = -1;
             for (int i = 0; i < costArr.length; i++) {
-                if(costArr[i] < min) {
+                if (costArr[i] < min) {
                     min = costArr[i];
                     minIndex = i;
                 }
@@ -130,57 +132,47 @@ public class Main {
             return desiredValues[minIndex];
         }
     }
-
 }
-    /*public static void testNN(Network n) {
-        System.out.println("\nTest begun");
-        n.initializeNetwork(Util.flattenArr(DataGenerator.generateA()));
-        final DecimalFormat df = new DecimalFormat("0.00");
-        double[] result = n.pulseWithCost();
-        Arrays.stream(result).forEach(e -> System.out.print(df.format(e) + " "));
-        System.out.println();
-        System.out.println(Arrays.toString(OutputProfiles.A.getProfile()));
-        System.out.println(Util.calculateCost(result, OutputProfiles.A.getProfile()));
-
-        n.initializeNetwork(Util.flattenArr(DataGenerator.generateB()));
-        result = n.pulseWithCost();
-        Arrays.stream(result).forEach(e -> System.out.print(df.format(e) + " "));
-        System.out.println();
-        System.out.println(Arrays.toString(OutputProfiles.B.getProfile()));
-        System.out.println(Util.calculateCost(result, OutputProfiles.B.getProfile()));
-
-        n.initializeNetwork(Util.flattenArr(DataGenerator.generateC()));
-        result = n.pulseWithCost();
-        Arrays.stream(result).forEach(e -> System.out.print(df.format(e) + " "));
-        System.out.println();
-        System.out.println(Arrays.toString(OutputProfiles.C.getProfile()));
-        System.out.println(Util.calculateCost(result, OutputProfiles.C.getProfile()));
-
-        n.initializeNetwork(Util.flattenArr(DataGenerator.generateD()));
-        result = n.pulseWithCost();
-        Arrays.stream(result).forEach(e -> System.out.print(df.format(e) + " "));
-        System.out.println();
-        System.out.println(Arrays.toString(OutputProfiles.D.getProfile()));
-        System.out.println(Util.calculateCost(result, OutputProfiles.D.getProfile()));
-
-        double a = (new Random().nextDouble() * (0.25)) + (0.75);
-        double b = (new Random().nextDouble() * (0.25));
-        double[][] unseenData = {
-            {a, a, b, a, a, a, a, a, a},
-            {a, 0, 0, 0, 0, 0, 0, b, a},
-            {a, 0, b, 0, 0, 0, b, 0, a},
-            {a, 0, 0, 0, 0, 0, 0, 0, a},
-            {a, 0, 0, b, b, 0, b, 0, a},
-            {a, 0, 0, 0, 0, 0, 0, 0, b},
-            {a, 0, b, 0, 0, 0, 0, 0, a},
-            {a, 0, 0, b, 0, b, 0, 0, a},
-            {a, b, a, a, a, a, a, a, a}
-        };
-        n.initializeNetwork(Util.flattenArr(unseenData));
-        result = n.pulseWithCost();
-        Arrays.stream(result).forEach(e -> System.out.print(df.format(e) + " "));
-        System.out.println();
-        System.out.println(Arrays.toString(OutputProfiles.A.getProfile()));
-        System.out.println(Util.calculateCost(result, OutputProfiles.A.getProfile()));
-        System.out.println("Test ended\n");
-    }*/
+/*
+ * public static void testNN(Network n) { System.out.println("\nTest begun");
+ * n.initializeNetwork(Util.flattenArr(DataGenerator.generateA())); final
+ * DecimalFormat df = new DecimalFormat("0.00"); double[] result =
+ * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
+ * System.out.print(df.format(e) + " ")); System.out.println();
+ * System.out.println(Arrays.toString(OutputProfiles.A.getProfile()));
+ * System.out.println(Util.calculateCost(result,
+ * OutputProfiles.A.getProfile()));
+ * 
+ * n.initializeNetwork(Util.flattenArr(DataGenerator.generateB())); result =
+ * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
+ * System.out.print(df.format(e) + " ")); System.out.println();
+ * System.out.println(Arrays.toString(OutputProfiles.B.getProfile()));
+ * System.out.println(Util.calculateCost(result,
+ * OutputProfiles.B.getProfile()));
+ * 
+ * n.initializeNetwork(Util.flattenArr(DataGenerator.generateC())); result =
+ * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
+ * System.out.print(df.format(e) + " ")); System.out.println();
+ * System.out.println(Arrays.toString(OutputProfiles.C.getProfile()));
+ * System.out.println(Util.calculateCost(result,
+ * OutputProfiles.C.getProfile()));
+ * 
+ * n.initializeNetwork(Util.flattenArr(DataGenerator.generateD())); result =
+ * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
+ * System.out.print(df.format(e) + " ")); System.out.println();
+ * System.out.println(Arrays.toString(OutputProfiles.D.getProfile()));
+ * System.out.println(Util.calculateCost(result,
+ * OutputProfiles.D.getProfile()));
+ * 
+ * double a = (new Random().nextDouble() * (0.25)) + (0.75); double b = (new
+ * Random().nextDouble() * (0.25)); double[][] unseenData = { {a, a, b, a, a, a,
+ * a, a, a}, {a, 0, 0, 0, 0, 0, 0, b, a}, {a, 0, b, 0, 0, 0, b, 0, a}, {a, 0, 0,
+ * 0, 0, 0, 0, 0, a}, {a, 0, 0, b, b, 0, b, 0, a}, {a, 0, 0, 0, 0, 0, 0, 0, b},
+ * {a, 0, b, 0, 0, 0, 0, 0, a}, {a, 0, 0, b, 0, b, 0, 0, a}, {a, b, a, a, a, a,
+ * a, a, a} }; n.initializeNetwork(Util.flattenArr(unseenData)); result =
+ * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
+ * System.out.print(df.format(e) + " ")); System.out.println();
+ * System.out.println(Arrays.toString(OutputProfiles.A.getProfile()));
+ * System.out.println(Util.calculateCost(result,
+ * OutputProfiles.A.getProfile())); System.out.println("Test ended\n"); }
+ */

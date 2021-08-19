@@ -65,4 +65,3 @@ public class DataGenerator {
         return ret_val;
     }
 }
-//(r.nextDouble() * (.25)) + (0.75)
