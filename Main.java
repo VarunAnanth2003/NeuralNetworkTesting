@@ -1,6 +1,7 @@
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
@@ -24,23 +25,25 @@ public class Main {
     // TODO: Use MNIST handwriting to test NN
     // TODO: Comment code and make useable
     public static void main(String[] args) throws TooFewLayersException {
-        prepareData();
-        Network n = new Network(new int[] { 81, 4 },
-                new ActivationOptions[] { ActivationOptions.SIGMOID, ActivationOptions.SIGMOID },
+        /*prepareData();
+        Network n = new Network(new int[] { 81, 57, 4 },
+                new ActivationOptions[] { ActivationOptions.SIGMOID, ActivationOptions.SIGMOID, ActivationOptions.LEAKY_RE_LU },
                 CostOptions.QUADRATIC);
-        for (int i = 0; i < Constants.batchSize * 1000; i++) {
+        for (int i = 0; i < Constants.batchSize * 100; i++) {
             OutputProfiles op = OutputProfiles.getRandomProfile();
             n.pulseWithInput(Util.flattenArr(trainingData.get(op)[new Random().nextInt(100000)]));
             n.learnFrom(op.getProfile());
             if (i % Constants.batchSize == 0)
                 n.updateLayers();
         }
-        testNN(n);
+        n.saveToFile();*/
+        Network n = Util.readFromFile(new File("C:\\Users\\shrav\\Desktop\\NNTest\\Saved Networks\\1629768499932.txt"));
+        testNN(n, new File("A.png"));
     }
 
-    public static void testNN(Network n) {
+    public static void testNN(Network n, File fileToRead) {
         try {
-            BufferedImage image = ImageIO.read(new File("A.png"));
+            BufferedImage image = ImageIO.read(fileToRead);
             double[][] data = new double[image.getHeight()][image.getWidth()];
             for (int i = 0; i < data.length; i++) {
                 for (int j = 0; j < data[i].length; j++) {
@@ -54,7 +57,9 @@ public class Main {
             n.initializeNetwork(Util.flattenArr(data));
             double[] result = n.pulseWithResult();
             System.out.println("This is a: " + OutputProfiles.getBestProfile(result));
-            System.out.println("NN output: " + Arrays.toString(result));
+            System.out.print("NN Output: ");
+            Arrays.stream(result).forEach(e -> System.out.print(new DecimalFormat("0.00").format(e) + " ")); 
+            System.out.println();
         } catch (IOException e) {
             e.printStackTrace();
         }

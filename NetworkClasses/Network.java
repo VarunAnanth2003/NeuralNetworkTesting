@@ -1,5 +1,9 @@
 package NetworkClasses;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -35,13 +39,14 @@ public class Network {
         cf = new CostFunction(costOp);
     }
 
-    public Network(Queue<Layer> layerQueue) throws TooFewLayersException {
+    public Network(Queue<Layer> layerQueue, CostFunction cf) throws TooFewLayersException {
         if (layerQueue.size() < 2) {
             throw new TooFewLayersException();
         }
         numLayers = layerQueue.size();
         this.layerQueue = layerQueue;
         inputLayer = layerQueue.peek();
+        this.cf = cf;
     }
 
     public void initializeNetwork(double[] initialValues) {
@@ -148,6 +153,65 @@ public class Network {
 
     public Queue<Layer> getLayers() {
         return layerQueue;
+    }
+
+    public void saveToFile(File f) {
+        System.out.println("Saving...");
+        try {
+            f.createNewFile();
+            FileWriter w = new FileWriter(f);
+            w.write(this.cf.getCo() + "\n");
+            w.write(layerQueue.size() + "\n");
+            for (Layer l : layerQueue) {
+                w.write(l.getNeurons().size() + " " + l.getNextNodesNum() + " ");
+                w.write(l.getActivationFunction().getAo() + "\n");
+                for (Neuron n : l.getNeurons()) {
+                    Arrays.stream(n.getWeights()).forEach(value -> {
+                        try {
+                            w.write(value + " ");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    w.write("\n" + n.getBias() + "\n");
+                }
+            }
+            w.flush();
+            w.close();
+            System.out.println("Saved to " + f.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveToFile() {
+        System.out.println("Saving...");
+        try {
+            File f = new File("Saved Networks\\" + System.currentTimeMillis() + ".txt");
+            f.createNewFile();
+            FileWriter w = new FileWriter(f);
+            w.write(this.cf.getCo() + "\n");
+            w.write(layerQueue.size() + "\n");
+            for (Layer l : layerQueue) {
+                w.write(l.getNeurons().size() + " " + l.getNextNodesNum() + " ");
+                w.write(l.getActivationFunction().getAo() + "\n");
+                for (Neuron n : l.getNeurons()) {
+                    Arrays.stream(n.getWeights()).forEach(value -> {
+                        try {
+                            w.write(value + " ");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    w.write("\n" + n.getBias() + "\n");
+                }
+            }
+            w.flush();
+            w.close();
+            System.out.println("Saved to " + f.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

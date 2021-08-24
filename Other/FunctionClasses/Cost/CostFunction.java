@@ -2,8 +2,10 @@ package Other.FunctionClasses.Cost;
 
 public class CostFunction {
     private CostFunctionInterface selectedFunction;
+    private CostOptions co;
 
     public CostFunction(CostOptions f) {
+        co = f;
         switch (f) {
             case QUADRATIC:
                 selectedFunction = new CostFunctionInterface() {
@@ -44,5 +46,13 @@ public class CostFunction {
 
     public CostFunctionInterface getFunction() {
         return selectedFunction;
+    }
+
+    public String getCo() {
+        return co.toString();
+    }
+
+    public static CostFunction convertStringToObject(String s) {
+        return new CostFunction(CostOptions.valueOf(s));
     }
 }

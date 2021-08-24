@@ -16,12 +16,14 @@ public class Layer {
     private boolean hasWeights = false;
     private boolean hasBiases = false;
     private ActivationFunction af;
+    private int nextNodesNum = 0;
 
     public Layer(int nodesNum, int nextNodesNum, ActivationFunction af) {
         for (int i = 0; i < nodesNum; i++) {
             neuronQueue.add(new Neuron(true, nextNodesNum));
         }
         this.af = af;
+        this.nextNodesNum = nextNodesNum;
     }
 
     public Layer(int nodesNum, ActivationFunction af) {
@@ -31,9 +33,10 @@ public class Layer {
         this.af = af;
     }
 
-    public Layer(Queue<Neuron> neuronSet, ActivationFunction af) {
+    public Layer(Queue<Neuron> neuronSet, ActivationFunction af, int nextNodesNum) {
         this.neuronQueue = neuronSet;
         this.af = af;
+        this.nextNodesNum = nextNodesNum;
     }
 
     public Queue<Neuron> getNeurons() {
@@ -58,6 +61,14 @@ public class Layer {
             counter++;
         }
         return ret_val;
+    }
+
+    public void setNextNodesNum(int nextNodesNum) {
+        this.nextNodesNum = nextNodesNum;
+    }
+
+    public int getNextNodesNum() {
+        return nextNodesNum;
     }
 
     public ActivationFunction getActivationFunction() {
