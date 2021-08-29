@@ -14,21 +14,24 @@ import Other.Constants;
 import Other.DataGenerator;
 import Other.Util;
 import Other.FunctionClasses.Activation.ActivationOptions;
+import Other.FunctionClasses.Cost.CostFunction;
 import Other.FunctionClasses.Cost.CostOptions;
 
-//Less than 1k lines!
 public class Main {
     public static HashMap<OutputProfiles, double[][][]> trainingData = new HashMap<>();
 
     // TODO: FULLY understand basic notation, structure, and backpropagation
+    // TODO: Comment on last backpropagation methods
     // TODO: implement momentum cleanly
     // TODO: Use MNIST handwriting to test NN
-    // TODO: Comment code and make useable
     public static void main(String[] args) throws TooFewLayersException {
-        /*prepareData();
-        Network n = new Network(new int[] { 81, 57, 4 },
-                new ActivationOptions[] { ActivationOptions.SIGMOID, ActivationOptions.SIGMOID, ActivationOptions.LEAKY_RE_LU },
-                CostOptions.QUADRATIC);
+        //Data prep
+        prepareData();
+
+        //Training
+        System.out.println("Training...");
+        Network n = new Network(new int[] { 81, 57, 4 }, new ActivationOptions[] { ActivationOptions.SIGMOID,
+                ActivationOptions.SIGMOID, ActivationOptions.LEAKY_RE_LU }, CostOptions.QUADRATIC);
         for (int i = 0; i < Constants.batchSize * 100; i++) {
             OutputProfiles op = OutputProfiles.getRandomProfile();
             n.pulseWithInput(Util.flattenArr(trainingData.get(op)[new Random().nextInt(100000)]));
@@ -36,11 +39,29 @@ public class Main {
             if (i % Constants.batchSize == 0)
                 n.updateLayers();
         }
-        n.saveToFile();*/
-        Network n = Util.readFromFile(new File("C:\\Users\\shrav\\Desktop\\NNTest\\Saved Networks\\1629768499932.txt"));
+        System.out.println("Training Complete!");
+
+        //Network write/read
+        n.saveToFile(new File("Saved Networks\\MyNetwork.txt"));
+        System.out.println("Reading...");
+        n = Util.readFromFile(new File("Saved Networks\\MyNetwork.txt"));
+        System.out.println("Read Complete");
+
+        //Testing
         testNN(n, new File("A.png"));
+        testNN(n, new File("B.png"));
+        testNN(n, new File("C.png"));
+        testNN(n, new File("D.png"));
     }
 
+    /**
+     * Tests the neural network passed in by "n" against the associated image within
+     * the File passed in by "fileToRead". For this case, only 9x9 neural networks
+     * can be tested
+     * 
+     * @param n
+     * @param fileToRead
+     */
     public static void testNN(Network n, File fileToRead) {
         try {
             BufferedImage image = ImageIO.read(fileToRead);
@@ -56,15 +77,21 @@ public class Main {
             }
             n.initializeNetwork(Util.flattenArr(data));
             double[] result = n.pulseWithResult();
-            System.out.println("This is a: " + OutputProfiles.getBestProfile(result));
+            System.out.println("This is a: " + OutputProfiles.getBestProfile(result, n.getCostFunction()));
             System.out.print("NN Output: ");
-            Arrays.stream(result).forEach(e -> System.out.print(new DecimalFormat("0.00").format(e) + " ")); 
+            Arrays.stream(result).forEach(e -> System.out.print(new DecimalFormat("0.00").format(e) + " "));
             System.out.println();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Prepares and populates the "trainingData HashSet with randomized matrixes as
+     * created by the DataGenerator class"
+     * 
+     * @see DataGenerator
+     */
     public static void prepareData() {
         int dataNum = 100000;
         double[][][] aData = new double[dataNum][][];
@@ -93,6 +120,10 @@ public class Main {
 
     }
 
+    /**
+     * An enum that holds "optimal" neural network outputs for multiple images,
+     * along with methods that facilitate data input/comparison
+     */
     enum OutputProfiles {
         SQUARE(new double[] { 1, 0, 0, 0 }), DIAMOND(new double[] { 0, 1, 0, 0 }), PLUS(new double[] { 0, 0, 1, 0 }),
         CROSS(new double[] { 0, 0, 0, 1 });
@@ -107,6 +138,11 @@ public class Main {
             this.profile = profile;
         }
 
+        /**
+         * Selects a random enum value and returns it
+         * 
+         * @return a random value from the possible values OutputProfiles can hold
+         */
         public static OutputProfiles getRandomProfile() {
             int randSel = new Random().nextInt(4);
             if (randSel == 0) {
@@ -120,11 +156,21 @@ public class Main {
             }
         }
 
-        public static OutputProfiles getBestProfile(double[] result) {
+        /**
+         * Compares the result from a neural network pulse to values within
+         * OutputProfiles to get the profile the network is most confident in
+         * identifying
+         * 
+         * @param result is the result of pulsing a neural network that needs to be
+         *               compared to the values in OutputProfiles
+         * @return is the OutputProfile that the neural network is most confident is the
+         *         "true" classification of the input
+         */
+        public static OutputProfiles getBestProfile(double[] result, CostFunction cf) {
             OutputProfiles[] desiredValues = OutputProfiles.values();
             double costArr[] = new double[desiredValues.length];
             for (int i = 0; i < costArr.length; i++) {
-                costArr[i] = Util.calculateCost(result, desiredValues[i].getProfile());
+                costArr[i] = cf.getFunction().calculateOriginal(result, desiredValues[i].getProfile());
             }
             double min = Double.POSITIVE_INFINITY;
             int minIndex = -1;
@@ -138,46 +184,3 @@ public class Main {
         }
     }
 }
-/*
- * public static void testNN(Network n) { System.out.println("\nTest begun");
- * n.initializeNetwork(Util.flattenArr(DataGenerator.generateA())); final
- * DecimalFormat df = new DecimalFormat("0.00"); double[] result =
- * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
- * System.out.print(df.format(e) + " ")); System.out.println();
- * System.out.println(Arrays.toString(OutputProfiles.A.getProfile()));
- * System.out.println(Util.calculateCost(result,
- * OutputProfiles.A.getProfile()));
- * 
- * n.initializeNetwork(Util.flattenArr(DataGenerator.generateB())); result =
- * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
- * System.out.print(df.format(e) + " ")); System.out.println();
- * System.out.println(Arrays.toString(OutputProfiles.B.getProfile()));
- * System.out.println(Util.calculateCost(result,
- * OutputProfiles.B.getProfile()));
- * 
- * n.initializeNetwork(Util.flattenArr(DataGenerator.generateC())); result =
- * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
- * System.out.print(df.format(e) + " ")); System.out.println();
- * System.out.println(Arrays.toString(OutputProfiles.C.getProfile()));
- * System.out.println(Util.calculateCost(result,
- * OutputProfiles.C.getProfile()));
- * 
- * n.initializeNetwork(Util.flattenArr(DataGenerator.generateD())); result =
- * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
- * System.out.print(df.format(e) + " ")); System.out.println();
- * System.out.println(Arrays.toString(OutputProfiles.D.getProfile()));
- * System.out.println(Util.calculateCost(result,
- * OutputProfiles.D.getProfile()));
- * 
- * double a = (new Random().nextDouble() * (0.25)) + (0.75); double b = (new
- * Random().nextDouble() * (0.25)); double[][] unseenData = { {a, a, b, a, a, a,
- * a, a, a}, {a, 0, 0, 0, 0, 0, 0, b, a}, {a, 0, b, 0, 0, 0, b, 0, a}, {a, 0, 0,
- * 0, 0, 0, 0, 0, a}, {a, 0, 0, b, b, 0, b, 0, a}, {a, 0, 0, 0, 0, 0, 0, 0, b},
- * {a, 0, b, 0, 0, 0, 0, 0, a}, {a, 0, 0, b, 0, b, 0, 0, a}, {a, b, a, a, a, a,
- * a, a, a} }; n.initializeNetwork(Util.flattenArr(unseenData)); result =
- * n.pulseWithCost(); Arrays.stream(result).forEach(e ->
- * System.out.print(df.format(e) + " ")); System.out.println();
- * System.out.println(Arrays.toString(OutputProfiles.A.getProfile()));
- * System.out.println(Util.calculateCost(result,
- * OutputProfiles.A.getProfile())); System.out.println("Test ended\n"); }
- */

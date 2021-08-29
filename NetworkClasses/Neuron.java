@@ -10,6 +10,18 @@ public class Neuron {
     private double b;
     private double val = 0;
 
+    /**
+     * Neuron constructor
+     * 
+     * @param randomize            if true, the values of the weights and biases of
+     *                             this Neuron will be randomized based on the
+     *                             values stated in the Constants class
+     * @param nextLayerNeuronCount the amount of neurons within the layer after the
+     *                             layer that these neurons are in. Used to
+     *                             determine the amount of elements int he weight
+     *                             array
+     * @see Constants
+     */
     public Neuron(boolean randomize, int nextLayerNeuronCount) {
         w = new double[nextLayerNeuronCount];
         if (randomize) {
@@ -27,6 +39,13 @@ public class Neuron {
         }
     }
 
+    /**
+     * Neuron constructor
+     * 
+     * @param randomize if true, the values of the weights and biases of this Neuron
+     *                  will be randomized based on the values stated in the
+     *                  Constants class
+     */
     public Neuron(boolean randomize) {
         if (randomize) {
             w = new double[0];

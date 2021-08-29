@@ -49,6 +49,14 @@ public class Network {
         this.cf = cf;
     }
 
+    /**
+     * Populates the first layer of the network with values (between 0.0 and 1.0)
+     * that can be pulsed through the network for a result
+     * 
+     * @param initialValues the values to initialize the function with. SHould be
+     *                      the same length as the number of neurons in the initial
+     *                      layer
+     */
     public void initializeNetwork(double[] initialValues) {
         int counter = 0;
         for (Neuron n : inputLayer.getNeurons()) {
@@ -62,6 +70,10 @@ public class Network {
         }
     }
 
+    /**
+     * Populates the first layer of the network with <b>[RANDOM]</b> values (between
+     * 0.0 and 1.0) that can be pulsed through the network for a result
+     */
     public void initializeNetwork() {
         for (Neuron n : inputLayer.getNeurons()) {
             try {
@@ -73,6 +85,13 @@ public class Network {
         }
     }
 
+    /**
+     * This method will iterate through each layer and use the weights and
+     * activations of that layer along with the biases of the next to compute the
+     * activations of the next layer and will repeat this process until the last
+     * layer, at which point the final layer of Neurons will collectively hold the
+     * vector of activations that is the ultimate result of this network
+     */
     public void pulse() {
         Layer currentLayer = null;
         Layer nextLayer = null;
@@ -85,6 +104,14 @@ public class Network {
         layerQueue.add(layerQueue.poll());
     }
 
+    /**
+     * This method will iterate through each layer and use the weights and
+     * activations of that layer along with the biases of the next to compute the
+     * activations of the next layer and will repeat this process until the last
+     * layer, at which point the final layer of Neurons will collectively hold the
+     * vector of activations that is the ultimate result of this network. This
+     * vector will also be returned as a double[]
+     */
     public double[] pulseWithResult() {
         Layer currentLayer = null;
         Layer nextLayer = null;
@@ -104,6 +131,15 @@ public class Network {
         return ret_val;
     }
 
+    /**
+     * Populates the first layer of the network with values (between 0.0 and 1.0)
+     * that are then pulsed through the network for a result.This method will
+     * iterate through each layer and use the weights and activations of that layer
+     * along with the biases of the next to compute the activations of the next
+     * layer and will repeat this process until the last layer, at which point the
+     * final layer of Neurons will collectively hold the vector of activations that
+     * is the ultimate result of this network
+     */
     public void pulseWithInput(double[] initialValues) {
         int counter = 0;
         for (Neuron n : inputLayer.getNeurons()) {
@@ -145,6 +181,11 @@ public class Network {
 
     }
 
+    /**
+     * Adjusts the weights and balances for all layers in this network. Can be
+     * implemented with a batch size of 1 for Stochastic gradient descent. Other
+     * uses will either be mini batch or batch gradient descent
+     */
     public void updateLayers() {
         for (Layer l : layerQueue) {
             l.adjustWB();
@@ -155,8 +196,14 @@ public class Network {
         return layerQueue;
     }
 
+    /**
+     * Saves this network's weights and biases to a text file at the location passed
+     * into this method. The formatting for the data can be found by viewing a file
+     * or taking a look at the README of this project
+     * 
+     * @param f the file location where the network will be saved
+     */
     public void saveToFile(File f) {
-        System.out.println("Saving...");
         try {
             f.createNewFile();
             FileWriter w = new FileWriter(f);
@@ -184,6 +231,14 @@ public class Network {
         }
     }
 
+    /**
+     * Saves this network's weights and biases to a text file at a default location
+     * (Saved Networks) with time in milliseconds since epoch as the name. The
+     * formatting for the data can be found by viewing a file or taking a look at
+     * the README of this project
+     * 
+     * @param f the file location where the network will be saved
+     */
     public void saveToFile() {
         System.out.println("Saving...");
         try {
@@ -212,6 +267,10 @@ public class Network {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public CostFunction getCostFunction() {
+        return cf;
     }
 
     @Override

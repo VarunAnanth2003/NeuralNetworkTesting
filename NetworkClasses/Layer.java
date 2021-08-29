@@ -43,6 +43,12 @@ public class Layer {
         return neuronQueue;
     }
 
+    /**
+     * Returns all of the values of the neurons in this layer as a double array
+     * (vector)
+     * 
+     * @return the double[] of values of the neurons from this layer
+     */
     public double[] getValuesAsVector() {
         double[] ret_val = new double[neuronQueue.size()];
         int counter = 0;
@@ -53,6 +59,14 @@ public class Layer {
         return ret_val;
     }
 
+    /**
+     * Returns all of the weights per neuron in this layer as a 2D double array
+     * (matrix)
+     * 
+     * @return the double[][] of weights. Rows represent neuron weight vectors and
+     *         each element is a specific weight intended for the connection of a
+     *         neuron from one layer to the next
+     */
     public double[][] getWeightsAsMatrix() {
         double[][] ret_val = new double[neuronQueue.size()][];
         int counter = 0;
@@ -75,6 +89,16 @@ public class Layer {
         return af;
     }
 
+    /**
+     * Uses the values of this layer to edit the values of the next layer within the
+     * network. Since this method is not meant to be changed it is assumed that the
+     * size of the vectors within the weight matrix of the current layer match up
+     * with the amount of Neurons in the next layer. The values of the next layer is
+     * determined by a function of the weights and activations of the previous layer
+     * and the biases of the next one.
+     * 
+     * @param nextLayer the layer who's values are edited
+     */
     public void activateLayer(Layer nextLayer) {
         int counter = 0;
         for (Neuron b : nextLayer.getNeurons()) {
@@ -88,6 +112,12 @@ public class Layer {
         }
     }
 
+    /**
+     * Adds the weight matrix changes calculated by backpropagation to a running
+     * total
+     * 
+     * @param dW the changes to the weight matrix to be added
+     */
     public void addWeightDeltas(double[][] dW) {
         if (dWSet.isEmpty()) {
             matrixDims[0] = dW.length;
@@ -97,11 +127,21 @@ public class Layer {
         hasWeights = true;
     }
 
+    /**
+     * Adds the bias matrix changes calculated by backpropagation to a running total
+     * 
+     * @param dB the changes to the bias matrix to be added
+     */
     public void addBiasDeltas(double[] dB) {
         dBSet.add(dB);
         hasBiases = true;
     }
 
+    /**
+     * Takes the running totals of the dW and dB sets and averages them. This
+     * average (multiplied by a constant that is the learning rate) is then used to
+     * affect the weights and biases of this layer
+     */
     public void adjustWB() {
         double[][] dW = new double[matrixDims[0]][matrixDims[1]];
         for (double[][] a : dWSet) {
@@ -135,7 +175,7 @@ public class Layer {
         }
         counter = 0;
         if (hasWeights) {
-            dW = Util.l2RegularizeMatrix(dW, Constants.L2regConstant);
+            dW = Util.l2RegularizeMatrix(dW); // L2 Regularization
             for (Neuron n : neuronQueue) {
                 for (int i = 0; i < dW[counter].length; i++) {
                     n.setWeight(i, n.getWeights()[i] - (dW[counter][i] * Constants.learningRate));

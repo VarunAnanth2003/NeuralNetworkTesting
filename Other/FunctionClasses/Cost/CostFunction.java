@@ -4,6 +4,16 @@ public class CostFunction {
     private CostFunctionInterface selectedFunction;
     private CostOptions co;
 
+    /**
+     * When an enum value from CostOptions is passed in, the selectedFunction
+     * parameter will take on the characteristics of the equation that the enum
+     * value is tied to. See the code for a breakdown of which enum value relates to
+     * which equation (although it should be apparent)
+     * 
+     * @param f the enum value corresponding to a specific function
+     * @see CostFunctionInterface
+     * @see CostOptions
+     */
     public CostFunction(CostOptions f) {
         co = f;
         switch (f) {
@@ -52,6 +62,13 @@ public class CostFunction {
         return co.toString();
     }
 
+    /**
+     * Converts a passed in string to a valid cost function
+     * 
+     * @param s String that relates to enum value to pass in
+     * @return a valid cost function with an included equation in relation to the
+     *         passed in String if the string is a valid enum member)
+     */
     public static CostFunction convertStringToObject(String s) {
         return new CostFunction(CostOptions.valueOf(s));
     }

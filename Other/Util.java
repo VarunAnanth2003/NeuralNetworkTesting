@@ -20,6 +20,12 @@ import Other.FunctionClasses.Cost.CostFunction;
 
 public class Util {
 
+    /**
+     * Turns a 2D array into a readable String
+     * 
+     * @param arr is the array to stringify
+     * @return the stringified array
+     */
     public static String stringify2DArr(double[][] arr) {
         String ret_val = "";
         for (int i = 0; i < arr.length; i++) {
@@ -28,6 +34,12 @@ public class Util {
         return ret_val;
     }
 
+    /**
+     * Calculates the average error within an array of errors represented by doubles
+     * 
+     * @param error is the error array to evaluate
+     * @return the average of the error array
+     */
     public static double getAvgError(double[] error) {
         double sum = 0;
         for (int i = 0; i < error.length; i++) {
@@ -36,29 +48,13 @@ public class Util {
         return (sum / error.length);
     }
 
-    public static double calculateCost(double[] result, double[] desiredValues) {
-        double ret_val = 0;
-        for (int i = 0; i < result.length; i++) {
-            try {
-                ret_val += Math.pow(result[i] - desiredValues[i], 2);
-            } catch (IndexOutOfBoundsException e) {
-                System.err.println("Desired values array does not match the network result array");
-                e.printStackTrace();
-            }
-        }
-        return ret_val;
-    }
-
-    public static double[] calculateCostDerivative(double[] result, double[] desiredValues) {
-        double[] ret_val = new double[result.length];
-        for (int i = 0; i < result.length; i++) {
-            try {
-                ret_val[i] = 2 * (result[i] - desiredValues[i]);
-            } catch (IndexOutOfBoundsException e) {
-                System.err.println("Desired values array does not match the network result array");
-                e.printStackTrace();
-            }
-        }
+    /**
+     * Flattens a 2D matrix into a 1D array
+     * @param arr the 2D double matrix to flatten
+     * @return the flattened matrix
+     */
+    public static double[] flattenArr(double[][] arr) {
+        double[] ret_val = Stream.of(arr).flatMapToDouble(Arrays::stream).toArray();
         return ret_val;
     }
 
@@ -66,16 +62,6 @@ public class Util {
         double[] ret_val = new double[a.length];
         for (int i = 0; i < a.length; i++) {
             ret_val[i] = af.getFunction().calculateDerivative(a[i]) * b[i];
-        }
-        return ret_val;
-    }
-
-    public static double[][] outerProduct(double[] a, double[] b) {
-        double[][] ret_val = new double[b.length][a.length];
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < b.length; j++) {
-                ret_val[j][i] = a[i] * b[j];
-            }
         }
         return ret_val;
     }
@@ -88,6 +74,30 @@ public class Util {
         return ret_val;
     }
 
+    /**
+     * Calculates the outer product of two 1D vectors
+     * @param a vector a
+     * @param b vector b
+     * @return 2D matrix product
+     * @see https://en.wikipedia.org/wiki/Outer_product
+     */
+    public static double[][] outerProduct(double[] a, double[] b) {
+        double[][] ret_val = new double[b.length][a.length];
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < b.length; j++) {
+                ret_val[j][i] = a[i] * b[j];
+            }
+        }
+        return ret_val;
+    }
+
+    /**
+     * Calculates the dot product of two 1D vectors
+     * @param a vector a
+     * @param b vector b
+     * @return scalar product
+     * @see https://en.wikipedia.org/wiki/Dot_product
+     */
     public static double dotProduct(double[] a, double[] b) {
         double ret_val = 0;
         for (int i = 0; i < a.length; i++) {
@@ -96,31 +106,29 @@ public class Util {
         return ret_val;
     }
 
-    public static double[] flattenArr(double[][] arr) {
-        double[] ret_val = Stream.of(arr).flatMapToDouble(Arrays::stream).toArray();
-        return ret_val;
-    }
-
-    public static double[][] multiplyOnMatrix(double[][] arr, double constant) {
+    /**
+     * Uses L2 Regularization to prevent a few neurons from dominating the ultimate output of the neural network by proportionally decreasing their influence based on a L2 Regularization constant that can be found in the Constants file
+     * @param arr unregularized matrix
+     * @return regularized matrix
+     * @see Constants
+     */
+    public static double[][] l2RegularizeMatrix(double[][] arr) {
         for (int i = 0; i < arr.length; i++) {
             for (int j = 0; j < arr[i].length; j++) {
-                arr[i][j] -= constant;
+                arr[i][j] = arr[i][j] - (arr[i][j] * Constants.L2regConstant);
             }
         }
         return arr;
     }
 
-    public static double[][] l2RegularizeMatrix(double[][] arr, double l2constant) {
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[i].length; j++) {
-                arr[i][j] = arr[i][j] - (arr[i][j] * l2constant);
-            }
-        }
-        return arr;
-    }
-
+    /**
+     * Reads a text file of weights, biases, and other information to reconstruct a
+     * pre-trained neural network
+     * 
+     * @param f the file to read from
+     * @return a trained neural network
+     */
     public static Network readFromFile(File f) {
-        System.out.println("Reading...");
         try {
             Queue<Layer> layerQueue = new LinkedList<>();
             BufferedReader b = new BufferedReader(new FileReader(f));
@@ -145,7 +153,8 @@ public class Util {
                     neuronQueue.add(n);
                     weightBiasReader.close();
                 }
-                layerQueue.add(new Layer(neuronQueue, ActivationFunction.convertStringToObject(activationFunctionString), nextNodeNum));
+                layerQueue.add(new Layer(neuronQueue,
+                        ActivationFunction.convertStringToObject(activationFunctionString), nextNodeNum));
                 paramReader.close();
             }
             b.close();
