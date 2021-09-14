@@ -7,7 +7,7 @@
 <br>
 
 #### <b><u>Template NN Save file:</b></u>
-<code>
+```
 [COST FUNCTION]
 
 [# OF LAYERS]
@@ -27,7 +27,7 @@
 [NEURONS IN CURRENT LAYER (m)] [NEURONS IN NEXT LAYER (k)] [ACTIVATION FUNCTION]
 
 ...
-</code>  
+```  
 <br>
 
 #### Meta info: This project was completed without the use of external libraries and is "pure java" This whole project took about one week to make, another to refine, and another to comment. Enjoy!
