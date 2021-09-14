@@ -23,10 +23,10 @@ public class Main {
     // TODO: implement momentum cleanly
     // TODO: Use MNIST handwriting to test NN
     public static void main(String[] args) throws TooFewLayersException {
-        //Data prep
+        // Data prep
         prepareData();
 
-        //Training
+        // Training
         System.out.println("Training...");
         Network n = new Network(new int[] { 81, 57, 4 }, new ActivationOptions[] { ActivationOptions.SIGMOID,
                 ActivationOptions.SIGMOID, ActivationOptions.LEAKY_RE_LU }, CostOptions.QUADRATIC);
@@ -39,13 +39,13 @@ public class Main {
         }
         System.out.println("Training Complete!");
 
-        //Network write/read
+        // Network write/read
         n.saveToFile(new File("Saved Networks\\MyNetwork.txt"));
         System.out.println("Reading...");
         n = Util.readFromFile(new File("Saved Networks\\MyNetwork.txt"));
         System.out.println("Read Complete");
 
-        //Testing
+        // Testing
         testNN(n, new File("A.png"));
         testNN(n, new File("B.png"));
         testNN(n, new File("C.png"));
