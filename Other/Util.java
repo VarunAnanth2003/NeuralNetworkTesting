@@ -50,6 +50,7 @@ public class Util {
 
     /**
      * Flattens a 2D matrix into a 1D array
+     * 
      * @param arr the 2D double matrix to flatten
      * @return the flattened matrix
      */
@@ -58,7 +59,18 @@ public class Util {
         return ret_val;
     }
 
-    public static double[] calculatedCdI(double[] a, double[] b, ActivationFunction af) {
+    /**
+     * Calculates the partial derivative of the cost with respect to the raw
+     * activation as a function called z (w*a+b)
+     * 
+     * @param a  activation values of the current layer
+     * @param b  the partial derivative of the cost with respect to the current
+     *           layer activations
+     * @param af the activation function used by the layer
+     * @return the partial derivative of the cost with respect to the raw activation
+     *         as a function called z (w*a+b)
+     */
+    public static double[] calculatedCdz(double[] a, double[] b, ActivationFunction af) {
         double[] ret_val = new double[a.length];
         for (int i = 0; i < a.length; i++) {
             ret_val[i] = af.getFunction().calculateDerivative(a[i]) * b[i];
@@ -66,7 +78,18 @@ public class Util {
         return ret_val;
     }
 
-    public static double[] calculatedCdO(double[][] a, double[] b) {
+    /**
+     * Calculates the partial derivative of the cost function with respect to the
+     * activations of the previous layer
+     * 
+     * @param a the weight matrix of the previous layer
+     * @param b the dCdz calculation for the current layer as returned by the
+     *          "calculatedCdZ" method in the Util class
+     * @return the partial derivative of the cost function with respect to the
+     *         activations of the previous layer
+     * @see Util
+     */
+    public static double[] calculatedCda(double[][] a, double[] b) {
         double[] ret_val = new double[a.length];
         for (int i = 0; i < ret_val.length; i++) {
             ret_val[i] = dotProduct(a[i], b);
@@ -76,6 +99,7 @@ public class Util {
 
     /**
      * Calculates the outer product of two 1D vectors
+     * 
      * @param a vector a
      * @param b vector b
      * @return 2D matrix product
@@ -93,6 +117,7 @@ public class Util {
 
     /**
      * Calculates the dot product of two 1D vectors
+     * 
      * @param a vector a
      * @param b vector b
      * @return scalar product
@@ -107,7 +132,10 @@ public class Util {
     }
 
     /**
-     * Uses L2 Regularization to prevent a few neurons from dominating the ultimate output of the neural network by proportionally decreasing their influence based on a L2 Regularization constant that can be found in the Constants file
+     * Uses L2 Regularization to prevent a few neurons from dominating the ultimate
+     * output of the neural network by proportionally decreasing their influence
+     * based on a L2 Regularization constant that can be found in the Constants file
+     * 
      * @param arr unregularized matrix
      * @return regularized matrix
      * @see Constants

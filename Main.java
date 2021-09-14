@@ -20,8 +20,6 @@ import Other.FunctionClasses.Cost.CostOptions;
 public class Main {
     public static HashMap<OutputProfiles, double[][][]> trainingData = new HashMap<>();
 
-    // TODO: FULLY understand basic notation, structure, and backpropagation
-    // TODO: Comment on last backpropagation methods
     // TODO: implement momentum cleanly
     // TODO: Use MNIST handwriting to test NN
     public static void main(String[] args) throws TooFewLayersException {
@@ -32,7 +30,7 @@ public class Main {
         System.out.println("Training...");
         Network n = new Network(new int[] { 81, 57, 4 }, new ActivationOptions[] { ActivationOptions.SIGMOID,
                 ActivationOptions.SIGMOID, ActivationOptions.LEAKY_RE_LU }, CostOptions.QUADRATIC);
-        for (int i = 0; i < Constants.batchSize * 100; i++) {
+        for (int i = 0; i < Constants.batchSize * 1000; i++) {
             OutputProfiles op = OutputProfiles.getRandomProfile();
             n.pulseWithInput(Util.flattenArr(trainingData.get(op)[new Random().nextInt(100000)]));
             n.learnFrom(op.getProfile());

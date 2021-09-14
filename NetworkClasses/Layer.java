@@ -107,7 +107,7 @@ public class Layer {
                 sum += (a.getVal() * (a.getWeights()[counter]));
             }
             counter++;
-            sum = af.getFunction().calculateOriginal(sum - b.getBias());
+            sum = af.getFunction().calculateOriginal(sum + b.getBias());
             b.setVal(sum);
         }
     }

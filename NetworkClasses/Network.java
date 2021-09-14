@@ -162,6 +162,14 @@ public class Network {
         layerQueue.add(layerQueue.poll());
     }
 
+    /**
+     * Uses an expected value along with backpropagation calculus to adjust the
+     * weights and biases of the network to optimize the cost function towards zero.
+     * <b> This is where the learning happens! </b>
+     * 
+     * @param expected the expected output of the neural network for a certain
+     *                 training example
+     */
     public void learnFrom(double[] expected) {
         Stack<Layer> stackLayers = new Stack<>();
         for (Layer l : layerQueue) {
@@ -169,20 +177,20 @@ public class Network {
         }
         Layer curLayer = stackLayers.pop();
 
-        double[] dCdO = cf.getFunction().calculateDerivative(curLayer.getValuesAsVector(), expected);
+        double[] dCda = cf.getFunction().calculateDerivative(curLayer.getValuesAsVector(), expected);
         do {
-            double[] dCdi = Util.calculatedCdI(curLayer.getValuesAsVector(), dCdO, curLayer.getActivationFunction());
-            double[][] dCdW = Util.outerProduct(dCdi, stackLayers.peek().getValuesAsVector());
-            curLayer.addBiasDeltas(dCdi);
+            double[] dCdz = Util.calculatedCdz(curLayer.getValuesAsVector(), dCda, curLayer.getActivationFunction());
+            double[][] dCdW = Util.outerProduct(dCdz, stackLayers.peek().getValuesAsVector());
+            curLayer.addBiasDeltas(dCdz);
             stackLayers.peek().addWeightDeltas(dCdW);
-            dCdO = Util.calculatedCdO(stackLayers.peek().getWeightsAsMatrix(), dCdi);
+            dCda = Util.calculatedCda(stackLayers.peek().getWeightsAsMatrix(), dCdz);
             curLayer = stackLayers.pop();
         } while (!stackLayers.empty());
 
     }
 
     /**
-     * Adjusts the weights and balances for all layers in this network. Can be
+     * Adjusts the weights and biases for all layers in this network. Can be
      * implemented with a batch size of 1 for Stochastic gradient descent. Other
      * uses will either be mini batch or batch gradient descent
      */
